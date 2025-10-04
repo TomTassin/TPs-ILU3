@@ -4,7 +4,7 @@ public class FinLimite extends Limite {
 
 	@Override
 	public String toString() {
-		return "Fin de limitation";
+		return "Fin Limite";
 	}
 
 }

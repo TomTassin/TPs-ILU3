@@ -4,7 +4,7 @@ public class DebutLimite extends Limite {
 
 	@Override
 	public String toString() {
-		return "Debut de limitation";
+		return "Limite 50";
 	}
 
 }
