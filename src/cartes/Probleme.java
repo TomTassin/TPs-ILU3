@@ -9,5 +9,8 @@ public abstract class Probleme extends Carte {
 	public Type getType() {
 		return type;
 	}
+	
+	@Override
+	public abstract boolean equals (Object obj);
 
 }

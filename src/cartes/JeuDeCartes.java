@@ -61,6 +61,20 @@ public class JeuDeCartes {
 		}
 		return jeuCartes;
 	}
+	
+	public boolean checkCount() {
+		Carte[] check = donnerCartes();
+		int index = 0;
+		for (int i = 0; i < typesDeCartes.length; i++) {
+			for (int j = 0; j < typesDeCartes[i].getNbExemplaires(); j++) {
+				if(!check[index].equals(typesDeCartes[i].getCarte())) {
+					return false;
+				}
+				index++;
+			}
+		}
+		return true;
+	}
 
 	private static class Configuration{
 		private int nbExemplaires;
