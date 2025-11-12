@@ -14,7 +14,7 @@ import cartes.Limite;
 
 public class ZoneDeJeu {
 	private List<Limite> pileLimiteFinLimites = new ArrayList<>();
-	private List<Bataille> bataille = new ArrayList<>();
+	private List<Bataille> batailles = new ArrayList<>();
 	private List<Borne> bornes = new ArrayList<>();
 	
 	public int donnerLimitationVitesse() {
@@ -31,7 +31,20 @@ public class ZoneDeJeu {
 			Borne borne = iterator.next();
 			km+=borne.getKm();
 		}
-		return 0;
+		return km;
 	}
 	
+	public void deposer(Carte c) {
+		if (c instanceof Borne borne) {
+			if (borne.getKm() <= donnerLimitationVitesse()) {
+				bornes.add(borne);
+			}else {
+				System.out.println("Limite : " + donnerLimitationVitesse());
+			}
+		} else if (c instanceof Limite limite){
+			pileLimiteFinLimites.add(limite);
+		} else if (c instanceof Bataille bataille){
+			batailles.add(bataille);
+		}
+	}
 }
