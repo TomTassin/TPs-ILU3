@@ -9,9 +9,6 @@ public class DebutLimite extends Limite {
 	
 	@Override
 	public boolean equals (Object obj) {
-		if(obj instanceof DebutLimite debut) {
-			return this.equals(debut.toString());
-		}
-		return false;
+		return (obj instanceof DebutLimite);
 	}
 }

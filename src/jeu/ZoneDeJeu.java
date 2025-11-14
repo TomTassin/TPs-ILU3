@@ -1,17 +1,15 @@
 package jeu;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Set;
 
-import javax.sound.sampled.EnumControl.Type;
 
 import cartes.Attaque;
 import cartes.Bataille;
 import cartes.Borne;
+import cartes.Botte;
 import cartes.Carte;
 import cartes.DebutLimite;
 import cartes.FinLimite;
@@ -22,10 +20,17 @@ public class ZoneDeJeu {
 	private List<Limite> limites = new ArrayList<>();
 	private List<Bataille> batailles = new ArrayList<>();
 	private List<Borne> bornes = new ArrayList<>();
+	private List<Botte> bottes = new ArrayList<>();
 	
 	public int donnerLimitationVitesse() {
 		ListIterator<Limite> it = limites.listIterator();
-		if(!(it.hasNext()) || (it.next().equals("Fin Limite"))) {
+		if (!it.hasNext()) return 200;
+		Limite limite = it.next();
+		while (it.hasNext()) {
+			limite = it.next();
+		}
+		FinLimite finLimite = new FinLimite();
+		if(limite.equals(finLimite)) {
 			return 200;
 		}
 		return 50;
@@ -45,7 +50,7 @@ public class ZoneDeJeu {
 			if (borne.getKm() <= donnerLimitationVitesse()) {
 				bornes.add(borne);
 			}else {
-				System.out.println("Limite : " + donnerLimitationVitesse());
+				System.out.println("1Limite : " + donnerLimitationVitesse());
 			}
 		} else if (c instanceof Limite limite){
 			limites.add(limite);
@@ -55,38 +60,43 @@ public class ZoneDeJeu {
 	}
 	
 	public boolean peutAvancer() {
-		return !batailles.isEmpty() && (batailles.getLast()).equals(Cartes.FEU_VERT);
+		return !batailles.isEmpty() && batailles.get(batailles.size()-1).equals(Cartes.FEU_VERT);
 	}
 	
 	private boolean estDepotFeuVertAutorise() {
 		return batailles.isEmpty() || 
-				((batailles.getLast()).equals(Cartes.FEU_ROUGE) 
-						|| !(batailles.getLast()).equals(Cartes.FEU_VERT));
+				(batailles.get(batailles.size()-1).equals(Cartes.FEU_ROUGE) 
+						|| !batailles.get(batailles.size()-1).equals(Cartes.FEU_VERT));
 	}
 	
 	 private boolean estDepotBorneAutorise(Borne borne) {
 		 return peutAvancer() && (borne.getKm() <= donnerLimitationVitesse()) && (donnerKmParcourus()<1000);
 	 }
 	 
-	 private boolean estDepotLimiteAutorise(Limite limite) {
-		if(limite instanceof DebutLimite) {
-			return limites.isEmpty() || (limites.getLast()).equals("Fin Limite");
+	private boolean estDepotLimiteAutorise(Limite limite) {
+		if(limite instanceof DebutLimite debutLimite) {
+			return limites.isEmpty() || !limites.get(limites.size()-1).equals(debutLimite);
 		}
-		if(limite instanceof FinLimite) {
-			return (limites.getLast()).equals("Limite 50");
+		if(limite instanceof FinLimite finLimite) {
+			return !limites.isEmpty() && !limites.get(limites.size()-1).equals(finLimite);
 		}
 		return false;
 	 }
 	 
 	 private boolean estDepotBatailleAutorise(Bataille bataille) {
-		 if(bataille instanceof Attaque) {
-			 return !(batailles.getLast() instanceof Attaque);
+		 Bataille lastBataille = null;
+		 if (!batailles.isEmpty()) lastBataille = batailles.get(batailles.size()-1);
+		 if(bataille instanceof Attaque attaque) {
+			 if(attaque.equals(Cartes.FEU_ROUGE)) {
+				 return !batailles.isEmpty() && lastBataille.equals(Cartes.FEU_VERT);
+			 }
+			 return  !batailles.isEmpty() && !(lastBataille instanceof Attaque);
 		 }
 		 if(bataille instanceof Parade parade) {
 			 if(parade.equals(Cartes.FEU_VERT)) {
 				 return estDepotFeuVertAutorise();
 			 }else {
-				 if (batailles.getLast() instanceof Attaque attaque) {
+				 if (lastBataille instanceof Attaque attaque) {
 					 return !batailles.isEmpty() && ((parade.getType()).equals(attaque.getType()));
 				 }
 			 }
